@@ -2,3 +2,5 @@
 node_modules/
 _td_database/
 _td_files/
+bun.lockb
+*.txt

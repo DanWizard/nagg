@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.36.3",
+    "dotenv": "^16.4.7",
+    "tdl": "^8.0.2"
+  },
+  "scripts": {
+    "ai": "bun run claude.js",
+    "testing": "echo 'hello world'; bun run testing.js",
+    "telegram": "bun run index.js"
+  }
+}
