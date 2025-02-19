@@ -4,3 +4,5 @@ _td_database/
 _td_files/
 bun.lockb
 *.txt
+upload-site.sh
+enter-server.sh
