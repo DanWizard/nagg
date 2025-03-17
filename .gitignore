@@ -6,3 +6,4 @@ bun.lockb
 *.txt
 upload-site.sh
 enter-server.sh
+service_tips.sh

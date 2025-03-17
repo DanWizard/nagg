@@ -28,21 +28,26 @@ async function main() {
 
     // Get the directory name of the current script
 
-    fs.writeFile(path.join(dir, `${i}.txt`), formattedForAgg, (err) => {
-      if (err) throw err;
-      console.log(
-        `The file for ${currentChat.name} has been saved in the same directory!`,
-      );
-    });
+    fs.writeFile(
+      `/home/test/code/smagg/chat_logs/${i}.txt`,
+      formattedForAgg,
+      (err) => {
+        if (err) throw err;
+      },
+    );
     console.log(
-      `The file for ${currentChat.name} has been saved in the same directory!`,
+      `The file for ${currentChat.name} has been saved in chat_logs!`,
     );
   }
   await client.close();
   const now = new Date();
-  fs.writeFile(path.join(dir, `last_run.txt`), now.toISOString(), (err) => {
-    if (err) throw err;
-  });
+  fs.writeFile(
+    "/home/test/code/smagg/last_run.txt",
+    now.toISOString(),
+    (err) => {
+      if (err) throw err;
+    },
+  );
   console.log("last_run has been updated to:", now.toLocaleString());
 }
 

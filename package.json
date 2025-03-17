@@ -7,6 +7,7 @@
   "scripts": {
     "ai": "bun run claude.js",
     "testing": "echo 'hello world'; bun run testing.js",
-    "telegram": "bun run index.js"
+    "telegram": "bun run index.js",
+    "cron": "echo 'ran cron' >> ~/code/smagg/cron.txt"
   }
 }

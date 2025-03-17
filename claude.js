@@ -1,6 +1,6 @@
 const { Anthropic } = require("@anthropic-ai/sdk");
 const fs = require("fs/promises");
-require("dotenv").config();
+require("dotenv").config({ path: "/home/test/code/smagg/.env" });
 const path = require("path");
 
 // Initialize the client with your API key
@@ -12,7 +12,10 @@ async function askClaude() {
   let prompt = "";
 
   for (let i = 0; i < 22; i++) {
-    const data = await fs.readFile(`${i}.txt`, "utf8");
+    const data = await fs.readFile(
+      `/home/test/code/smagg/chat_logs/${i}.txt`,
+      "utf8",
+    );
     prompt += `${data}\n\n`;
   }
 
@@ -48,7 +51,7 @@ async function askClaude() {
       .replace(",", "");
 
     fs.writeFile(
-      path.join(dir, `./reports/${formattedDate}-report.txt`),
+      `/home/test/code/smagg/reports/${formattedDate}-report.txt`,
       message.content[0].text,
       (err) => {
         if (err) throw err;

@@ -1,5 +1,5 @@
 const tdl = require("tdl");
-require("dotenv").config();
+require("dotenv").config({ path: "/home/test/code/smagg/.env" });
 const fs = require("fs/promises");
 const path = require("path");
 
@@ -15,7 +15,7 @@ function formatDate(date) {
 }
 
 async function isFromLastRun(dateToCheck) {
-  const data = await fs.readFile(`last_run.txt`, "utf8");
+  const data = await fs.readFile(`/home/test/code/smagg/last_run.txt`, "utf8");
   const lastRun = new Date(data);
   const isNew = lastRun.getTime() <= dateToCheck.getTime();
   console.log("is new:", isNew);
