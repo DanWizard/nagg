@@ -7,3 +7,5 @@ bun.lockb
 upload-site.sh
 enter-server.sh
 service_tips.sh
+helpers/content-sources.js
+

@@ -1,54 +1,54 @@
 const path = require("path");
 const fs = require("fs/promises");
-const {
-  loadChat,
-  importantChats,
-  auth,
-  filterMsgs,
-  formatMsgs,
-  getChatMsgs,
-  getChats,
-} = require("./helpers.js");
+const { tg } = require("./tg.js");
+const { rss } = require("./rss.js");
+const { combineStandardization } = require("./helpers/ai-helpers.js");
 
 async function main() {
-  const dir = path.dirname(__filename);
-  const client = await auth();
+  const tgres = await tg();
+  const rssres = await rss();
 
-  await getChats(client);
-  await getChats(client);
-  await getChats(client);
+  const combinedCrypto = rssres.Crypto + `\n\nSEPARATOR\n\n${tgres.Crypto}`;
+  const cryptoRes = (await combineStandardization(combinedCrypto)).content[0]
+    .text;
 
-  let msgs = [];
-  for (let i = 0; i < importantChats.length; i++) {
-    const currentChat = importantChats[i];
-    const loadedChat = await loadChat(client, currentChat.id);
-    msgs = await getChatMsgs(client, loadedChat, currentChat);
-    msgs = await filterMsgs(msgs, currentChat);
-    formattedForAgg = formatMsgs(msgs, currentChat);
+  const combinedGeopolitics =
+    rssres.Geopolitics + `\n\nSEPARATOR\n\n${tgres.Geopolitics}`;
+  const geoRes = (await combineStandardization(combinedGeopolitics)).content[0]
+    .text;
 
-    // Get the directory name of the current script
+  const newsdoc = `CRYPTO
 
-    fs.writeFile(
-      `/home/test/code/smagg/chat_logs/${i}.txt`,
-      formattedForAgg,
-      (err) => {
-        if (err) throw err;
-      },
-    );
-    console.log(
-      `The file for ${currentChat.name} has been saved in chat_logs!`,
-    );
-  }
-  await client.close();
-  const now = new Date();
+${cryptoRes}
+
+GEOPOLITICS
+
+${geoRes}
+
+
+HEALTH
+
+${rssres.Health}
+
+
+MACRO
+
+${rssres.Macro}
+
+
+CONSPIRACY
+
+${rssres.Conspiracy}
+`;
+
   fs.writeFile(
-    "/home/test/code/smagg/last_run.txt",
-    now.toISOString(),
+    `/home/test/code/smagg/reports/rss-report.txt`,
+    newsdoc,
     (err) => {
       if (err) throw err;
+      console.log("The file has been saved in the same directory!");
     },
   );
-  console.log("last_run has been updated to:", now.toLocaleString());
 }
 
 main().catch(console.error);

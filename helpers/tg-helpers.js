@@ -15,11 +15,10 @@ function formatDate(date) {
 }
 
 async function isFromLastRun(dateToCheck) {
-  const data = await fs.readFile(`/home/test/code/smagg/last_run.txt`, "utf8");
-  const lastRun = new Date(data);
-  const isNew = lastRun.getTime() <= dateToCheck.getTime();
-  console.log("is new:", isNew);
-  return isNew;
+  const now = new Date();
+  const isLessThan12HoursOld =
+    now.getTime() - dateToCheck.getTime() <= 12 * 60 * 60 * 1000;
+  return isLessThan12HoursOld;
 }
 
 let importantChats = JSON.parse(process.env.IMPORTANT_CHATS);
@@ -36,7 +35,7 @@ const getChats = async (client) => {
       _: "getChat",
       chat_id: chatId,
     });
-    console.log(`name: \"${chat.title}\", type: \"CRYPTO\", id: ${chatId}`);
+    // console.log(`name: \"${chat.title}\", type: \"CRYPTO\", id: ${chatId}`);
   }
 };
 
