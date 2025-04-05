@@ -3,10 +3,14 @@ const fs = require("fs/promises");
 const { tg } = require("./tg.js");
 const { rss } = require("./rss.js");
 const { combineStandardization } = require("./helpers/ai-helpers.js");
+const { handleArgs } = require("./helpers/args.js");
+const { getLookBackHours } = require("./helpers/time-helpers.js");
 
 async function main() {
-  const tgres = await tg();
-  const rssres = await rss();
+  const argObj = handleArgs();
+  const lookBack = getLookBackHours();
+  const tgres = await tg(lookBack);
+  const rssres = await rss(lookBack);
 
   const combinedCrypto = rssres.Crypto + `\n\nSEPARATOR\n\n${tgres.Crypto}`;
   const cryptoRes = (await combineStandardization(combinedCrypto)).content[0]
@@ -20,6 +24,7 @@ async function main() {
   const newsdoc = `CRYPTO
 
 ${cryptoRes}
+
 
 GEOPOLITICS
 
@@ -39,10 +44,17 @@ ${rssres.Macro}
 CONSPIRACY
 
 ${rssres.Conspiracy}
+
+
+REDDIT
+
+${rssres.Reddit}
+
+
 `;
 
   fs.writeFile(
-    `/home/test/code/smagg/reports/rss-report.txt`,
+    `/home/test/code/news/${argObj.year}/${argObj.month}/${argObj.day}/${argObj.time}.txt`,
     newsdoc,
     (err) => {
       if (err) throw err;

@@ -4,7 +4,6 @@ const path = require("path");
 const fs = require("fs/promises");
 const {
   loadChat,
-  importantChats,
   auth,
   filterMsgs,
   formatMsgs,
@@ -13,7 +12,7 @@ const {
 } = require("./helpers/tg-helpers.js");
 const { contentMap } = require("./helpers/content-sources.js");
 
-export const tg = async () => {
+export const tg = async (lookBack) => {
   const topics = contentMap.topics;
   const newstree = {};
 
@@ -36,7 +35,7 @@ export const tg = async () => {
         console.log(currentChat);
         const loadedChat = await loadChat(client, currentChat.id);
         msgs = await getChatMsgs(client, loadedChat, currentChat);
-        msgs = await filterMsgs(msgs, currentChat);
+        msgs = await filterMsgs(msgs, lookBack);
         let formattedForAgg = formatMsgs(msgs, currentChat);
         topicLength += formattedForAgg.length;
         console.log(

@@ -1,5 +1,5 @@
 const tdl = require("tdl");
-require("dotenv").config({ path: "/home/test/code/smagg/.env" });
+require("dotenv").config({ path: "/home/test/code/nagg/.env" });
 const fs = require("fs/promises");
 const path = require("path");
 
@@ -14,14 +14,12 @@ function formatDate(date) {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
-async function isFromLastRun(dateToCheck) {
+async function isFromLastRun(dateToCheck, lookBack) {
   const now = new Date();
   const isLessThan12HoursOld =
-    now.getTime() - dateToCheck.getTime() <= 12 * 60 * 60 * 1000;
+    now.getTime() - dateToCheck.getTime() <= lookBack * 60 * 60 * 1000;
   return isLessThan12HoursOld;
 }
-
-let importantChats = JSON.parse(process.env.IMPORTANT_CHATS);
 
 const getChats = async (client) => {
   const chats = await client.invoke({
@@ -136,7 +134,7 @@ const getChatMsgs = async (client, loadedChat, chat) => {
   return msgCont;
 };
 
-const filterMsgs = async (msgs) => {
+const filterMsgs = async (msgs, lookBack) => {
   const smple = msgs.map((m) => {
     // console.log("messageid", m.id);
     let icontent = null;
@@ -153,7 +151,7 @@ const filterMsgs = async (msgs) => {
   // console.log("final s", smple);
   const recentMsgs = [];
   for (let j = 0; j < smple.length; j++) {
-    const isNew = await isFromLastRun(new Date(smple[j].date * 1000));
+    const isNew = await isFromLastRun(new Date(smple[j].date * 1000), lookBack);
     if (isNew && smple[j].content) {
       recentMsgs.push(smple[j]);
     }
@@ -186,7 +184,6 @@ const formatMsgs = (msgs, chat) => {
 module.exports = {
   formatMsgs,
   filterMsgs,
-  importantChats,
   getChats,
   getChatMsgs,
   loadChat,

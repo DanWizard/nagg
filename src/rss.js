@@ -13,7 +13,7 @@ function stripTags(xmlString) {
   return xmlString.replace(/<[^>]*>?/g, "");
 }
 
-export const rss = async () => {
+export const rss = async (lookBack) => {
   const newstree = {};
   const topics = contentMap.topics;
   for (let v = 0; v < topics.length; v++) {
@@ -22,7 +22,9 @@ export const rss = async () => {
     const feeds = contentMap.rss[topic];
     for (let i = 0; i < feeds.length; i++) {
       const feed = feeds[i].rssurl;
-      const items = await getRssItems(feed);
+      console.log("call db");
+      const items = await getRssItems(feed, lookBack);
+      console.log("db finish");
       newstree[topic][feed] = items;
     }
   }
@@ -52,7 +54,9 @@ export const rss = async () => {
     const standardizedRes = [];
     for (let v = 0; v < prompts.length; v++) {
       const prompt = prompts[v];
+      console.log("call ai");
       const airesponse = await standardizeRSS(prompt);
+      console.log("ai finish");
       standardizedRes.push(airesponse.content[0].text);
     }
     let categorySummary = [];
@@ -60,8 +64,10 @@ export const rss = async () => {
       categorySummary = standardizedRes.reduce(
         (acc, curr) => acc + `\n\nSEPARATOR\n\n${curr}`,
       );
+      console.log("combine ai");
       categorySummary = (await combineStandardization(categorySummary))
         .content[0].text;
+      console.log("combine ai finished");
     }
     console.log(categorySummary);
     resulttree[category] = categorySummary;

@@ -1,6 +1,6 @@
 const { Anthropic } = require("@anthropic-ai/sdk");
 const fs = require("fs/promises");
-require("dotenv").config({ path: "/home/test/code/smagg/.env" });
+require("dotenv").config({ path: "/home/test/code/nagg/.env" });
 const {
   standardizationSystemPromptRSS,
   standardizationSystemPromptTG,
