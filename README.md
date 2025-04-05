@@ -1,90 +1,140 @@
-# Smagg: Telegram News Aggregation Tool
+# Nagg - News Aggregator
 
-## Overview
-
-Smagg is an automated news aggregation tool that retrieves and processes messages from specified Telegram chats, generating summarized reports using Claude AI. The project is designed to run on a server with a scheduled task, collecting recent messages from important chat sources and creating structured documentation.
+Nagg is a powerful news aggregation system that collects, processes, and summarizes content from various sources including Telegram channels and RSS feeds. It uses Claude AI to standardize and combine information into digestible summaries organized by topic.
 
 ## Features
 
-- Authenticate and connect to Telegram using TDLib
-- Retrieve messages from predefined important chat sources
-- Filter messages based on recency
-- Format and prepare messages for analysis
-- Generate AI-powered summaries using Anthropic's Claude
-- Automatically run on a predefined schedule using systemd
+- Collects content from multiple Telegram channels
+- Aggregates data from RSS feeds
+- Uses Claude AI to process and standardize content into facts and opinions
+- Organizes content by topics (Geopolitics, Crypto, Health, Macro, Conspiracy, Reddit)
+- Runs on a schedule using systemd timers
 
 ## Prerequisites
 
-- Bun runtime
-- Node.js
+- Node.js/Bun runtime
 - Telegram API credentials
-- Anthropic API key
-- systemd (for scheduled runs)
+- Claude API key
+- Newsboat RSS reader (for RSS database)
+- Linux environment with systemd (for scheduling)
 
 ## Installation
 
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   bun install
-   ```
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/nagg.git
+cd nagg
+```
 
-3. Create a `.env` file with the following variables:
-   ```
-   API_ID=your_telegram_api_id
-   API_HASH=your_telegram_api_hash
-   PN=your_phone_number
-   PW=your_telegram_password
-   CLAUDE_SECRET=your_anthropic_api_key
-   PROMPT=your_claude_summarization_prompt
-   IMPORTANT_CHATS=[{"id": chat_id, "name": "Chat Name", "desc": "Description", "importance": "High"}]
-   ```
+2. Install dependencies:
+```bash
+bun install
+```
+
+3. Set up environment variables by creating a `.env` file in the project root:
+```
+CLAUDE_SECRET=your_claude_api_key
+API_ID=your_telegram_api_id
+API_HASH=your_telegram_api_hash
+PN=your_telegram_phone_number
+PW=your_telegram_password
+```
+
+4. Configure systemd timer:
+   Create `/etc/systemd/system/nagg.service`:
+```
+[Unit]
+Description=News Aggregation Service
+
+[Service]
+ExecStart=/path/to/bun /path/to/nagg/src/index.js --year=2025 --month=04 --day=05 --time=morning
+WorkingDirectory=/path/to/nagg
+User=your_username
+Group=your_group
+Environment=NODE_ENV=production
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+```
+
+   Create `/etc/systemd/system/nagg.timer`:
+```
+[Unit]
+Description="Run nagg service at 6 and 18 UTC+1 daily"
+
+[Timer]
+OnCalendar=*-*-* 08:00:00
+OnCalendar=*-*-* 18:00:00
+Persistent=true
+Unit=nagg.service
+
+[Install]
+WantedBy=timers.target
+```
+
+5. Enable and start the timer:
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable nagg.timer
+sudo systemctl start nagg.timer
+```
+
+## Usage
+
+Nagg runs automatically at the scheduled times (8:00 and 18:00 UTC+1) each day. 
+
+You can also run it manually:
+
+```bash
+bun run src/index.js --year=2025 --month=04 --day=05 --time=morning
+```
+
+This will:
+1. Collect recent messages from configured Telegram channels
+2. Fetch RSS feed items from the Newsboat database
+3. Process the content using Claude AI
+4. Generate a report organized by topic
+5. Save the report to `/home/test/code/news/YYYY/MM/DD/[morning|evening].txt`
 
 ## Project Structure
 
-- `index.js`: Main script for Telegram message retrieval
-- `helpers.js`: Utility functions for chat processing
-- `claude.js`: Claude AI interaction and report generation
-- `test.sh`: Cron job configuration
-- `package.json`: Project dependencies and scripts
+- `src/index.js` - Main entry point
+- `src/tg.js` - Telegram data collection
+- `src/rss.js` - RSS feed processing
+- `src/helpers/` - Utility functions
+  - `ai-helpers.js` - Claude API interaction
+  - `args.js` - Command line argument parsing
+  - `content-sources.js` - Configuration for sources
+  - `db-helpers.js` - Database interaction
+  - `prompts.js` - Claude prompt templates
+  - `rss-helpers.js` - RSS item retrieval
+  - `tg-helpers.js` - Telegram client functions
+  - `time-helpers.js` - Time-related utilities
 
-## Scheduled Execution
+## Configuration
 
-The project uses a systemd timer to run at specific intervals (8 AM, 1 PM, and 5 PM in the current configuration). The script is triggered via Bun runtime.
+Edit `src/helpers/content-sources.js` to add or modify content sources:
 
-## Usage Scripts
+- `topics` - List of content categories
+- `tg` - Telegram channels by topic
+- `rss` - RSS feeds by topic
 
-- `bun telegram`: Retrieve and process Telegram messages
-- `bun ai`: Generate AI summary using Claude
-- `bun testing`: Run testing script
+## Available Scripts
 
-## Deployment
-
-1. Set up systemd timer
-2. Ensure `.env` is properly configured
-3. Run the script via `bun telegram`
-
-## Security Considerations
-
-- Keep `.env` file secure and out of version control
-- Use environment variables for sensitive credentials
-- Ensure proper permissions on server-side scripts
+- `bun run ai` - Run Claude interactions test
+- `bun run testing` - Run test script
+- `bun run telegram` - Run the main application
+- `bun run cron` - Log cron execution
 
 ## Troubleshooting
 
-- Verify Telegram API credentials
-- Check Anthropic API key
-- Ensure Bun runtime is correctly installed
-- Review systemd timer logs for execution issues
-
-## Contributing
-
-Contributions are welcome. Please submit pull requests or open issues for any improvements or bug fixes.
+If the timer isn't triggering the service:
+1. Check systemd logs: `journalctl -u nagg.timer`
+2. Verify timer status: `systemctl status nagg.timer`
+3. Ensure the timer is enabled and active
+4. Check that the service unit is properly referenced in the timer
 
 ## License
 
-[Add your license information here]
-
-## Disclaimer
-
-This tool is for informational purposes. Ensure compliance with Telegram's terms of service and respect privacy guidelines.
+[Your License Here]
