@@ -27,12 +27,6 @@ export const contentMap = {
         importance: 7,
       },
       {
-        name: "Nicholas J. Fuentes",
-        id: -1001343341889,
-        desc: "This is just a headlines news channel for crypto and financial news",
-        importance: 7,
-      },
-      {
         name: "World News [Breaking News]",
         id: -1001252754045,
         desc: "This is a geopolitics channel that generally just reports the news sometimes with a opinion but it is pretty good.",
