@@ -120,13 +120,6 @@ Edit `src/helpers/content-sources.js` to add or modify content sources:
 - `tg` - Telegram channels by topic
 - `rss` - RSS feeds by topic
 
-## Available Scripts
-
-- `bun run ai` - Run Claude interactions test
-- `bun run testing` - Run test script
-- `bun run telegram` - Run the main application
-- `bun run cron` - Log cron execution
-
 ## Troubleshooting
 
 If the timer isn't triggering the service:
