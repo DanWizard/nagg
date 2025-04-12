@@ -1,6 +1,6 @@
 # Nagg - News Aggregator
 
-Nagg is a powerful news aggregation system that collects, processes, and summarizes content from various sources including Telegram channels and RSS feeds. It uses Claude AI to standardize and combine information into digestible summaries organized by topic.
+Nagg is a news aggregation system that collects, processes, and summarizes content from various sources including Telegram channels and RSS feeds. It uses Claude AI to standardize and combine information into digestible summaries organized by topic.
 
 ## Features
 
