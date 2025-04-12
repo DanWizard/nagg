@@ -128,6 +128,3 @@ If the timer isn't triggering the service:
 3. Ensure the timer is enabled and active
 4. Check that the service unit is properly referenced in the timer
 
-## License
-
-[Your License Here]
